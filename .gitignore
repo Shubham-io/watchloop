@@ -1,0 +1,51 @@
+  # Node.js dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.*  # In case you use multiple .env files like .env.dev, .env.prod
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+
+# Build output
+dist/
+build/
+
+# Test coverage
+coverage/
+
+# PM2 process logs
+pids
+*.pid
+*.seed
+
+# Database dumps
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+*.dump
+
+# SSL files (if any)
+*.pem
+*.key
+*.crt
+
+# Optional: Ignore uploads folder if storing user content
+# public/uploads/
+ 
