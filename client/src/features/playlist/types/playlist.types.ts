@@ -39,12 +39,12 @@ export type Playlist = {
   updatedAt: string;
 };
 
-export interface PlaylistSummary {
-  _id: string;
-  name: string;
-  description: string;
-  videos: string[];
-  owner: PlaylistOwner;
-  createdAt: string;
-  updatedAt: string;
-}
+// export interface PlaylistSummary {
+//   _id: string;
+//   name: string;
+//   description: string;
+//   videos: string[];
+//   owner: PlaylistOwner;
+//   createdAt: string;
+//   updatedAt: string;
+// }

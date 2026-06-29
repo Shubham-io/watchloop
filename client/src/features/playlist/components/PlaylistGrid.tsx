@@ -1,7 +1,7 @@
 import type { Playlist } from "../types/playlist.types";
 import PlaylistCard from "./PlaylistCard";
 
-type Props = {
+type Props = {              
   playlists: Playlist[];
 };
 

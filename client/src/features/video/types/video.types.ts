@@ -59,3 +59,17 @@ export type SearchParams = {
   sortType?: "asc" | "desc";
   userId?: string;
 };
+
+export type UploadProgress = {
+  percentage: number;
+  loaded: number;
+  total: number;
+  progress: number;
+  isUploading: boolean;
+  isFinalizing: boolean;
+  
+};
+
+export type PublishVideoOptions = {
+  onProgress?: (progress: UploadProgress) => void;
+};

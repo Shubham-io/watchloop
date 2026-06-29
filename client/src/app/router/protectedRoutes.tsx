@@ -5,6 +5,7 @@ import ChannelPage from "@watchloop/features/channel/page/ChannelPage";
 import SearchPage from "@watchloop/features/video/pages/SearchPage";
 import PlaylistsPage from "@watchloop/features/playlist/pages/PlaylistsPage";
 import PlaylistPage from "@watchloop/features/playlist/pages/PlaylistPage";
+import UploadVideoPage from "@watchloop/features/video/pages/UploadVideoPage";
 
 import { lazy } from "react";
 const HistoryPage = lazy(
@@ -42,5 +43,9 @@ export const protectedRoutes: RouteObject[] = [
   {
     path: "history",
     element: <HistoryPage />,
+  },
+  {
+    path: "upload",
+    element: <UploadVideoPage />,
   },
 ];

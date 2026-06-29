@@ -1,10 +1,8 @@
-"use client"
-
 import * as React from "react"
 import { Dialog as SheetPrimitive } from "radix-ui"
 
 import { cn } from "@watchloop/lib/utils"
-import { Button } from "./button"
+import { Button } from "@watchloop/components/ui/button"
 import { XIcon } from "lucide-react"
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
