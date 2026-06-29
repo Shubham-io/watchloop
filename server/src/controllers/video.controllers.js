@@ -9,6 +9,8 @@ import {
   uploadToCloudinary,
 } from "../utils/cloudinary.js";
 
+import { addVideoToWatchHistory } from "../services/video.services.js";
+
 const getAllVideos = asyncHandler(async (req, res) => {
   const {
     page = 1,
@@ -181,7 +183,10 @@ const getVideoById = asyncHandler(async (req, res) => {
     throw new ApiError(400, "video id is required");
   }
 
-  const video = await Video.findById(videoId);
+  const video = await Video.findById(videoId).populate(
+    "owner",
+    "username fullname avatar"
+  );
 
   if (!video) {
     throw new ApiError(400, "video is not available");
@@ -189,6 +194,11 @@ const getVideoById = asyncHandler(async (req, res) => {
 
   video.views += 1;
   await video.save();
+
+  // adding the video to watch history of user
+  if (req.user?._id) {
+    await addVideoToWatchHistory(req.user._id, videoId);
+  }
 
   return res
     .status(200)

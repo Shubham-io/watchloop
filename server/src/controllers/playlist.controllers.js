@@ -20,11 +20,16 @@ const createPlaylist = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Playlist already exists");
   }
 
-  const createdPlaylist = await Playlist.create({
+  const playlist = await Playlist.create({
     name: name.trim(),
     description: description.trim(),
     owner: req.user?._id,
   });
+
+  const createdPlaylist = await Playlist.findById(playlist._id).populate(
+    "owner",
+    "username fullName avatar"
+  );
 
   return res
     .status(201)
@@ -56,7 +61,13 @@ const getPlaylistById = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid playlist id");
   }
 
-  const playlist = await Playlist.findById(playlistId);
+  const playlist = await Playlist.findById(playlistId).populate({
+    path: "videos",
+    populate: {
+      path: "owner",
+      select: "username fullname avatar",
+    },
+  });
 
   if (!playlist) {
     throw new ApiError(404, "Playlist not found");
@@ -95,7 +106,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
     {
       new: true,
     }
-  );
+  ).populate("owner", "username fullname avatar");
 
   if (!updatedPlaylist) {
     throw new ApiError(404, "Playlist not found");
@@ -129,7 +140,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
     {
       new: true,
     }
-  );
+  ).populate("owner", "username fullname avatar");
 
   if (!updatedPlaylist) {
     throw new ApiError(
@@ -198,7 +209,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
       new: true,
       runValidators: true,
     }
-  );
+  ).populate("owner", "username fullname avatar");
 
   if (!updatedPlaylist) {
     throw new ApiError(404, "Playlist not found");

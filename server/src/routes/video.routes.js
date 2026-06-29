@@ -28,8 +28,8 @@ router.route("/publish").post(
   publishAVideo
 );
 
-router.route("/get-videos").get(verifyJWT, getAllVideos);
-router.route("/video/:videoId").get(verifyJWT, getVideoById);
+router.route("/").get(verifyJWT, getAllVideos);
+router.route("/:videoId").get(verifyJWT, getVideoById);
 router
   .route("/update-video/:videoId")
   .patch(verifyJWT, upload.single("thumbnail"), updateVideo);
