@@ -13,11 +13,11 @@
   "iconLibrary": "lucide",
   "rtl": false,
   "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils",
-    "ui": "@/components/ui",
-    "lib": "@/lib",
-    "hooks": "@/hooks"
+    "components": "@watchloop/components",
+    "utils": "@watchloop/lib/utils",
+    "ui": "@watchloop/components/ui",
+    "lib": "@watchloop/lib",
+    "hooks": "@watchloop/hooks"
   },
   "menuColor": "default",
   "menuAccent": "subtle",
