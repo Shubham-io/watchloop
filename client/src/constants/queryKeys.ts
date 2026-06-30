@@ -5,3 +5,8 @@ export const QUERY_KEYS = {
   PLAYLISTS: ["playlists"],
   SUBSCRIPTIONS: ["subscriptions"],
 };
+
+export const dashboardKeys = {
+  stats: ["stats"] as const,
+  videos: ["videos"] as const,
+};

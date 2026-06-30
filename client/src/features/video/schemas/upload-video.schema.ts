@@ -1,20 +1,11 @@
 import { z } from "zod";
 
-const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 500 MB
-const MAX_THUMBNAIL_SIZE = 5 * 1024 * 1024; // 5 MB
-
-const ACCEPTED_VIDEO_TYPES = [
-  "video/mp4",
-  "video/webm",
-  "video/quicktime", // .mov
-];
-
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
+import {
+  MAX_VIDEO_SIZE,
+  MAX_THUMBNAIL_SIZE,
+  ACCEPTED_VIDEO_TYPES,
+  ACCEPTED_IMAGE_TYPES,
+} from "@watchloop/constants/limits";
 
 export const uploadVideoSchema = z.object({
   title: z
