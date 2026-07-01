@@ -10,3 +10,8 @@ export const dashboardKeys = {
   stats: ["stats"] as const,
   videos: ["videos"] as const,
 };
+
+export const userKeys = {
+  currentUser: ["current-user"] as const,
+  watchHistory: ["watch-history"] as const,
+};

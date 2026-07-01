@@ -14,7 +14,7 @@ export const useVideo = (videoId: string) => {
     if (query.isSuccess) {
       queryClient.invalidateQueries({ queryKey: ["watch-history"] });
     }
-  }, [query.isSuccess, videoId]); // videoId ensures it fires on every new video
+  }, [query.isSuccess, videoId, queryClient]); // videoId ensures it fires on every new video
 
   return query;
 };

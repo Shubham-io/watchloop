@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { Upload } from "lucide-react";
 
 import { Button } from "@watchloop/components/ui/button";
@@ -17,26 +17,23 @@ const ThumbnailUploader = ({
   onChange,
   disabled,
 }: ThumbnailUploaderProps) => {
-  const [localPreviewUrl, setLocalPreviewUrl] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!value) {
-      setLocalPreviewUrl("");
-      return;
-    }
+  const localPreviewUrl = useMemo(() => {
+    if (!value) return null;
 
-    const objectUrl = URL.createObjectURL(value);
-    setLocalPreviewUrl(objectUrl);
-
-    return () => {
-      URL.revokeObjectURL(objectUrl);
-    };
+    return URL.createObjectURL(value);
   }, [value]);
 
-  const displayPreview = value
-    ? localPreviewUrl
-    : initialPreview;
+  useEffect(() => {
+    return () => {
+      if (localPreviewUrl) {
+        URL.revokeObjectURL(localPreviewUrl);
+      }
+    };
+  }, [localPreviewUrl]);
+
+  const displayPreview = localPreviewUrl ?? initialPreview;
 
   const handleRemove = () => {
     onChange(undefined);
@@ -64,17 +61,13 @@ const ThumbnailUploader = ({
         >
           <Upload className="mb-4 h-10 w-10 text-muted-foreground" />
 
-          <p className="text-lg font-semibold">
-            Upload Thumbnail
-          </p>
+          <p className="text-lg font-semibold">Upload Thumbnail</p>
 
           <p className="mt-2 text-sm text-muted-foreground">
             Click to browse your computer
           </p>
 
-          <p className="mt-1 text-xs text-muted-foreground">
-            PNG • JPG • WEBP
-          </p>
+          <p className="mt-1 text-xs text-muted-foreground">PNG • JPG • WEBP</p>
         </div>
       ) : (
         <>
@@ -96,9 +89,7 @@ const ThumbnailUploader = ({
                 </>
               ) : (
                 <>
-                  <p className="font-medium">
-                    Current Thumbnail
-                  </p>
+                  <p className="font-medium">Current Thumbnail</p>
 
                   <p className="text-sm text-muted-foreground">
                     Upload a new image to replace it

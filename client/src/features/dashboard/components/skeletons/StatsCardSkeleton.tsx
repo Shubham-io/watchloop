@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Card, CardContent, CardHeader } from "@watchloop/components/ui/card";
 import { Skeleton } from "@watchloop/components/ui/skeleton";
 

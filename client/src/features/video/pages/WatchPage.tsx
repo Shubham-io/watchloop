@@ -18,7 +18,7 @@ import WatchPageSkeleton from "../skeletons/WatchPageSkeleton";
 const WatchPage = () => {
   const { videoId } = useParams();
 
-  const { data: video, isLoading, isError } = useVideo(videoId!);
+  const { data: video, isLoading } = useVideo(videoId!);
   const { data: comments, isLoading: isCommentsLoading } = useComments(videoId!);
 
   

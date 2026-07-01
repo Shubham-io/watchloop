@@ -52,7 +52,7 @@ const UploadVideoForm = () => {
 
   const onSubmit = async (values: UploadVideoFormValues) => {
     try {
-      const video = await mutateAsync({
+      await mutateAsync({
         values,
       });
 

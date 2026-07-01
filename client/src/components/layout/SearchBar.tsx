@@ -15,6 +15,7 @@ export default function SearchBar() {
 
   const [inputValue, setInputValue] = useState(currentQuery);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     setInputValue(currentQuery);
   }, [currentQuery]);
@@ -95,7 +96,7 @@ export default function SearchBar() {
       {/* Submit button */}
       <Button
         type="submit"
-        className="rounded-full px-5 py-4.5 hover:cursor-pointer"
+        className="bg-white text-black hover:bg-gray-200 rounded-full px-5 py-4.5 hover:cursor-pointer "
         disabled={!inputValue.trim()}
       >
         Search

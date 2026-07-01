@@ -22,7 +22,7 @@ const PlaylistsPage = () => {
       {isLoading ? (
         <PlaylistSkeleton />
       ) : (
-        <PlaylistGrid playlists={playlists ?? []} />
+        <PlaylistGrid playlists={(playlists ?? []) as any} />
       )}
     </div>
   );

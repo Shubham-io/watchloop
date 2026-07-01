@@ -13,14 +13,14 @@ export type Thumbnail = {
   resource_type: string;
 };
 
-// export type PlaylistVideo = {
-//   _id: string;
-//   title: string;
-//   views: number;
-//   createdAt: string;
-//   thumbnail: Thumbnail;
-//   owner: PlaylistVideoOwner;
-// };
+export type PlaylistVideo = {
+  _id: string;
+  title: string;
+  views: number;
+  createdAt: string;
+  thumbnail: Thumbnail;
+  owner: PlaylistVideoOwner;
+};
 
 export type PlaylistOwner = {
   _id: string;
@@ -39,12 +39,12 @@ export type Playlist = {
   updatedAt: string;
 };
 
-// export interface PlaylistSummary {
-//   _id: string;
-//   name: string;
-//   description: string;
-//   videos: string[];
-//   owner: PlaylistOwner;
-//   createdAt: string;
-//   updatedAt: string;
-// }
+export interface PlaylistSummary {
+  _id: string;
+  name: string;
+  description: string;
+  videos: string[];
+  owner: PlaylistOwner;
+  createdAt: string;
+  updatedAt: string;
+}

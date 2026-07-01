@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { Upload } from "lucide-react";
 
 import { Button } from "@watchloop/components/ui/button";
@@ -10,22 +10,20 @@ type VideoUploaderProps = {
 };
 
 const VideoUploader = ({ value, onChange, disabled }: VideoUploaderProps) => {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const previewUrl = useMemo(() => {
+    if (!value) return null;
+
+    return URL.createObjectURL(value);
+  }, [value]);
 
   useEffect(() => {
-    if (!value) {
-      setPreviewUrl("");
-      return;
-    }
-
-    const url = URL.createObjectURL(value);
-    setPreviewUrl(url);
-
     return () => {
-      URL.revokeObjectURL(url);
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
     };
-  }, [value]);
+  }, [previewUrl]);
 
   const handleRemove = () => {
     onChange(undefined);

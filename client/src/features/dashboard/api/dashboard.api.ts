@@ -4,8 +4,6 @@ import type {
   ChannelStats,
   ChannelVideo,
   Subscriber,
-  TogglePublishPayload,
-  UpdateVideoPayload,
 } from "../types/dashboard.types";
 
 export const getChannelStats = async (): Promise<ChannelStats> => {

@@ -1,9 +1,4 @@
-import {
-  Home,
-  History,
-  LayoutDashboard,
-  Users,
-} from "lucide-react";
+import { Home, History, LayoutDashboard, Users, ListPlus } from "lucide-react";
 
 export const SIDEBAR_ITEMS = [
   {
@@ -22,6 +17,11 @@ export const SIDEBAR_ITEMS = [
     title: "History",
     href: "/history",
     icon: History,
+  },
+  {
+    title: "Playlists",
+    href: "/playlists",
+    icon: ListPlus,
   },
 
   {

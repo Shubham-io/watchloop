@@ -18,7 +18,6 @@ interface VideoActionsProps {
 }
 
 export const VideoActions = ({
-  video,
   onEdit,
   onDelete,
 }: VideoActionsProps) => {
