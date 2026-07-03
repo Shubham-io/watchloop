@@ -45,6 +45,10 @@ const SettingsPage = lazy(
   () => import("@watchloop/features/user/pages/SettingsPage"),
 );
 
+const SubscriptionsPage = lazy(
+  () => import("@watchloop/features/subscriptions/pages/SubscriptionsPage"),
+);
+
 export const protectedRoutes: RouteObject[] = [
   {
     index: true,
@@ -89,5 +93,9 @@ export const protectedRoutes: RouteObject[] = [
   {
     path: "settings",
     element: <SettingsPage />,
+  },
+  {
+    path: "/subscriptions",
+    element: <SubscriptionsPage />,
   },
 ];
