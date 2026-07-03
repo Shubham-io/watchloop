@@ -44,6 +44,68 @@ const getVideoComments = asyncHandler(async (req, res) => {
         },
       },
     },
+
+    // Get likes count and isLiked for each comment
+    {
+      $lookup: {
+        from: "likes",
+        let: {
+          commentId: "$_id",
+          currentUserId: req.user?._id
+            ? new mongoose.Types.ObjectId(req.user._id)
+            : null,
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$comment", "$$commentId"],
+              },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              likesCount: {
+                $sum: 1,
+              },
+              isLiked: {
+                $max: {
+                  $eq: ["$likedBy", "$$currentUserId"],
+                },
+              },
+            },
+          },
+        ],
+        as: "likesInfo",
+      },
+    },
+    {
+      $addFields: {
+        likesCount: {
+          $ifNull: [
+            {
+              $arrayElemAt: ["$likesInfo.likesCount", 0],
+            },
+            0,
+          ],
+        },
+        isLiked: {
+          $ifNull: [
+            {
+              $arrayElemAt: ["$likesInfo.isLiked", 0],
+            },
+            false,
+          ],
+        },
+      },
+    },
+    {
+      $project: {
+        likesInfo: 0,
+      },
+    },
+
     {
       $sort: {
         createdAt: -1,

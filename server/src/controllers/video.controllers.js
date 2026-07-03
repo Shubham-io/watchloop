@@ -1,6 +1,7 @@
 import mongoose, { isValidObjectId } from "mongoose";
 import { User } from "../models/user.models.js";
 import { Video } from "../models/video.models.js";
+import { Like } from "../models/like.models.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -183,17 +184,113 @@ const getVideoById = asyncHandler(async (req, res) => {
     throw new ApiError(400, "video id is required");
   }
 
-  const video = await Video.findById(videoId).populate(
-    "owner",
-    "username fullname avatar"
-  );
+  // const video = await Video.findById(videoId).populate(
+  //   "owner",
+  //   "username fullname avatar"
+  // );
+
+  // Increment view count
+
+  await Video.findByIdAndUpdate(videoId, {
+    $inc: { views: 1 },
+  });
+
+  const video = await Video.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(videoId),
+      },
+    },
+    // populate owner
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "owner",
+        pipeline: [
+          {
+            $project: {
+              username: 1,
+              fullname: 1,
+              avatar: 1,
+            },
+          },
+        ],
+      },
+    },
+
+    {
+      $unwind: "$owner",
+    },
+
+    // Get likes count and isLiked
+    {
+      $lookup: {
+        from: "likes",
+        let: {
+          videoId: "$_id",
+          currentUserId: req.user?._id
+            ? new mongoose.Types.ObjectId(req.user._id)
+            : null,
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $eq: ["$video", "$$videoId"],
+              },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              likesCount: {
+                $sum: 1,
+              },
+              isLiked: {
+                $max: {
+                  $eq: ["$likedBy", "$$currentUserId"],
+                },
+              },
+            },
+          },
+        ],
+        as: "likesInfo",
+      },
+    },
+
+    {
+      $addFields: {
+        likesCount: {
+          $ifNull: [
+            {
+              $arrayElemAt: ["$likesInfo.likesCount", 0],
+            },
+            0,
+          ],
+        },
+        isLiked: {
+          $ifNull: [
+            {
+              $arrayElemAt: ["$likesInfo.isLiked", 0],
+            },
+            false,
+          ],
+        },
+      },
+    },
+
+    {
+      $project: {
+        likesInfo: 0,
+      },
+    },
+  ]);
 
   if (!video) {
     throw new ApiError(400, "video is not available");
   }
-
-  video.views += 1;
-  await video.save();
 
   // adding the video to watch history of user
   if (req.user?._id) {
