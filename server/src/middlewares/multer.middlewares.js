@@ -2,7 +2,7 @@ import multer from "multer";
 import path from "path";
 import { ApiError } from "../utils/ApiError.js";
 
-const storage = multer.diskStorage({
+const storage = multer.memoryStorage({
   destination: function (req, file, cb) {
     cb(null, "./public/temp");
   },
@@ -36,7 +36,7 @@ const fileFilter = (req, file, cb) => {
 export const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
-  limit: {
+  limits: {
     fileSize: 5 * 1024 * 1024, // 5 MB file size limit
   },
 });
