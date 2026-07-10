@@ -1,5 +1,5 @@
 {
-  "name": "watchloop",
+  "name": "watchloop backend",
   "version": "1.0.0",
   "description": "A project inspired by youTube",
   "main": "src/index.js",

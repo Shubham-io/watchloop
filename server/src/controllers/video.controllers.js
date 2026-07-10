@@ -191,10 +191,6 @@ const getVideoById = asyncHandler(async (req, res) => {
 
   // Increment view count
 
-  await Video.findByIdAndUpdate(videoId, {
-    $inc: { views: 1 },
-  });
-
   const video = await Video.aggregate([
     {
       $match: {
@@ -299,7 +295,7 @@ const getVideoById = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, video, "Video fetched successfully"));
+    .json(new ApiResponse(200, video[0], "Video fetched successfully"));
 });
 
 const updateVideo = asyncHandler(async (req, res) => {
@@ -418,6 +414,40 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, video, "Video status updated successfully"));
 });
 
+const incrementViewCount = asyncHandler(async (req, res) => {
+  const { videoId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(videoId)) {
+    throw new ApiError(400, "Invalid video id");
+  }
+
+  const video = await Video.findByIdAndUpdate(
+    videoId,
+    {
+      $inc: {
+        views: 1,
+      },
+    },
+    {
+      new: true,
+      select: "views",
+    }
+  );
+
+  if (!video) {
+    throw new ApiError(404, "Video not found");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { views: video.views },
+        "Video view count updated successfully"
+      )
+    );
+});
+
 export {
   getAllVideos,
   publishAVideo,
@@ -425,4 +455,5 @@ export {
   updateVideo,
   deleteVideo,
   togglePublishStatus,
+  incrementViewCount,
 };
