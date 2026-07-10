@@ -1,5 +1,5 @@
-import LoginPage from "@watchloop/pages/LoginPage";
-import RegisterPage from "@watchloop/pages/RegisterPage";
+import LoginPage from "@watchloop/features/auth/pages/LoginPage";
+import RegisterPage from "@watchloop/features/auth/pages/RegisterPage";
 
 export const publicRoutes = [
   {

@@ -43,7 +43,7 @@ export const DashboardStats = ({ stats }: DashboardStatsProps) => {
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 grid-cols-2 xl:grid-cols-4">
       {cards.map(({ title, value, icon: Icon }) => (
         <Card key={title}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -55,7 +55,7 @@ export const DashboardStats = ({ stats }: DashboardStatsProps) => {
           </CardHeader>
 
           <CardContent>
-            <p className="text-2xl font-bold">{value}</p>
+            <p className="text-xl md:text-2xl font-bold">{value}</p>
           </CardContent>
         </Card>
       ))}

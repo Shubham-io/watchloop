@@ -6,6 +6,7 @@ import VideoPlayer from "../components/VideoPlayer";
 import VideoMeta from "../components/VideoMeta";
 import ChannelInfo from "../components/ChannelInfo";
 // import RecommendedVideos from "../components/RecommendedVideos";
+import { recordVideoView } from "../api/video.api";
 import {
   AddCommentForm,
   CommentsSkeleton,
@@ -14,29 +15,29 @@ import {
 } from "@watchloop/features/comment";
 
 import WatchPageSkeleton from "../skeletons/WatchPageSkeleton";
+import { useEffect } from "react";
 
 const WatchPage = () => {
   const { videoId } = useParams();
+  const currentPage = 1;
 
   const { data: video, isLoading } = useVideo(videoId!);
-  const { data: comments, isLoading: isCommentsLoading } = useComments(videoId!);
+  const { data: comments, isLoading: isCommentsLoading } = useComments(
+    videoId!, currentPage
+  );
 
-  
+  useEffect(() => {
+    if (!videoId) return;
+
+    recordVideoView(videoId);
+  }, [videoId]);
 
   if (isLoading) {
     return <WatchPageSkeleton />;
   }
 
-  //   if (isError || !data?.data) {
-  //     return <div className="p-4 text-red-500">Failed to load video</div>;
-  //   }
-
   if (!video) {
     return <div>Video not found</div>;
-  }
-
-  if (!videoId) {
-    return <h1>Video not found</h1>;
   }
 
   return (
@@ -53,7 +54,11 @@ const WatchPage = () => {
         {isCommentsLoading ? (
           <CommentsSkeleton />
         ) : (
-          <CommentList comments={comments?.docs || []} videoId={videoId} />
+          <CommentList
+            comments={comments?.docs || []}
+            videoId={videoId as string}
+            page={currentPage}
+          />
         )}
       </div>
 

@@ -12,10 +12,10 @@ const UploadButton = () => {
   return (
     <Button
       onClick={handleClick}
-      className="flex items-center gap-2 bg-white text-black hover:bg-gray-100 hover:cursor-pointer"
+      className="flex items-center gap-2 w-8 h-8 bg-white text-black hover:bg-gray-100 hover:cursor-pointer"
     >
       <Upload className="h-4 w-4" />
-      Upload
+      <span className="hidden lg:inline">Upload</span>
     </Button>
   );
 };

@@ -93,10 +93,20 @@ export default function SearchBar() {
         )}
       </div>
 
-      {/* Submit button */}
+      {/* Submit button on mobile */}
       <Button
         type="submit"
-        className="bg-white text-black hover:bg-gray-200 rounded-full px-5 py-4.5 hover:cursor-pointer "
+        size="icon"
+        className="rounded-full lg:hidden"
+        disabled={!inputValue.trim()}
+      >
+        <Search className="h-4 w-4" />
+      </Button>
+
+      {/* Submit button on desktop */}
+      <Button
+        type="submit"
+        className="hidden rounded-full bg-white px-5 py-4.5 text-black hover:bg-gray-200 lg:flex"
         disabled={!inputValue.trim()}
       >
         Search

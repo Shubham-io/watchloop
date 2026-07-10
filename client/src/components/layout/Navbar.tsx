@@ -5,10 +5,10 @@ import UploadButton from "./UploadButton";
 
 export default function Navbar() {
   return (
-    <header className="h-16 border-b px-6 flex items-center justify-between gap-6">
+    <header className="flex h-16 items-center justify-between gap-3 border-b px-3 md:px-5 lg:px-6">
       <AppLogo />
       <SearchBar />
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-center gap-2 md:gap-3 lg:gap-4">
         <UploadButton />
         <UserDropdown />
       </div>

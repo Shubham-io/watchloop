@@ -10,6 +10,8 @@ export interface Comment {
   content: string;
   video: string;
   owner: CommentOwner;
+  likesCount: number;
+  isLiked: boolean;
   createdAt: string;
   updatedAt: string;
 }

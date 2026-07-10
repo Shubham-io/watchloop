@@ -6,13 +6,21 @@ import { Button } from "@watchloop/components/ui/button";
 
 import type { Comment } from "../types/comment.types";
 import { useDeleteComment } from "../hooks/useDeleteComment";
+import { LikeButton } from "@watchloop/components/shared/LikeButton";
+import { useToggleCommentLike } from "@watchloop/features/likes/hooks/useToggleCommentLike";
 
 interface CommentCardProps {
   comment: Comment;
   videoId: string;
+  page: number;
 }
 
-export default function CommentCard({ comment, videoId }: CommentCardProps) {
+export default function CommentCard({
+  comment,
+  videoId,
+  page,
+}: CommentCardProps) {
+  const toggleCommentLike = useToggleCommentLike();
   const [isEditing, setIsEditing] = useState(false);
 
   const deleteCommentMutation = useDeleteComment(videoId);
@@ -45,8 +53,21 @@ export default function CommentCard({ comment, videoId }: CommentCardProps) {
             @{comment.owner.username}
           </div>
         </div>
-
         <p>{comment.content}</p>
+
+        <LikeButton
+          isLiked={comment.isLiked}
+          likesCount={comment.likesCount}
+          isPending={toggleCommentLike.isPending}
+          className="p-2"
+          onClick={() =>
+            toggleCommentLike.mutate({
+              commentId: comment._id,
+              videoId,
+              page,
+            })
+          }
+        />
       </div>
 
       <div className="flex gap-2">

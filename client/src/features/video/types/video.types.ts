@@ -29,6 +29,8 @@ export interface Video {
   updatedAt: string;
   isPublished: boolean;
   owner: VideoOwner;
+  likesCount: number;
+  isLiked: boolean;
 }
 
 export interface PaginatedVideosResponse {

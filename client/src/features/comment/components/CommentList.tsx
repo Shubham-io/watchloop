@@ -5,14 +5,23 @@ import type { Comment } from "../types/comment.types";
 interface CommentListProps {
   comments: Comment[];
   videoId: string;
+  page: number;
 }
 
-export default function CommentList({ comments, videoId }: CommentListProps) {
-  
+export default function CommentList({
+  comments,
+  videoId,
+  page,
+}: CommentListProps) {
   return (
     <div className="space-y-6">
       {comments.map((comment) => (
-        <CommentCard key={comment._id} comment={comment} videoId={videoId} />
+        <CommentCard
+          key={comment._id}
+          comment={comment}
+          videoId={videoId}
+          page={page}
+        />
       ))}
     </div>
   );

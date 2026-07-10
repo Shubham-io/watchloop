@@ -37,7 +37,7 @@ export const ChannelVideosTable = ({ videos }: ChannelVideosTableProps) => {
   return (
     <div className="rounded-md border">
       <div className="overflow-x-auto">
-        <Table>
+        <Table className="min-w-[900px]">
           <TableHeader>
             <TableRow>
               <TableHead>Video</TableHead>

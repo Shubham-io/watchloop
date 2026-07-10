@@ -54,3 +54,7 @@ export const publishVideo = async (
 
   return response.data.data;
 };
+
+export const recordVideoView = async (videoId: string) => {
+  await axiosInstance.post(`/videos/${videoId}/view`);
+};

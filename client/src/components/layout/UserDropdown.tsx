@@ -11,12 +11,13 @@ import { useLogout } from "@watchloop/features/auth/hooks/useLogout";
 import { useAppDispatch } from "@watchloop/store/hooks";
 import { logout } from "@watchloop/features/auth/authSlice";
 import { useCurrentUser } from "@watchloop/features/auth/hooks/useCurrentUser";
+import PageLoader from "../shared/PageLoader";
 
 export default function UserDropdown() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { mutateAsync } = useLogout();
-  const { data: user } = useCurrentUser();
+  const { data: user, isPending } = useCurrentUser();
 
   const handleLogout = async () => {
     await mutateAsync();
@@ -31,10 +32,17 @@ export default function UserDropdown() {
   const handleSettingsClick = () => {
     navigate("/settings");
   };
+
+  if (isPending) return <PageLoader />;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <UserAvatar src={user.avatar} className="hover:cursor-pointer" />
+        <button className="rounded-full focus:outline-none">
+          <UserAvatar
+            src={user.avatar}
+            className="cursor-pointer h-8 w-8 mt-2 md:h-10 md:w-10"
+          />
+        </button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
