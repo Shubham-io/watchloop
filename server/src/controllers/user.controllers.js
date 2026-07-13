@@ -134,6 +134,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
 
   // send response
@@ -451,7 +452,6 @@ const getWatchHistory = asyncHandler(async (req, res) => {
   ]);
 
   console.log("user data: ", user);
-
 
   return res
     .status(200)
