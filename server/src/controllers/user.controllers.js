@@ -27,6 +27,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
+  console.log("✅ registerUser controller reached");
   const { fullname, email, username, password } = req.body;
 
   // validation
@@ -45,8 +46,10 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User with this email or username already exists");
   }
 
-  const avatarLocalPath = req.files?.avatar[0]?.path;
+  const avatarLocalPath = req.files?.avatar?.[0]?.path;
   const coverLocalPath = req.files?.coverImage?.[0]?.path;
+
+  console.log("files:", req.files);
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar is required");
