@@ -4,17 +4,6 @@ A YouTube-inspired video streaming platform built with modern web technologies. 
 
 **Live Demo:** [https://watchloop-frontend.vercel.app](https://watchloop-frontend.vercel.app)
 
-## 📋 Table of Contents
-
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Installation](#installation)
-- [Environment Setup](#environment-setup)
-- [Running the Project](#running-the-project)
-- [API Routes](#api-routes)
-- [Contributing](#contributing)
-
 ## ✨ Features
 
 ### Video Management
