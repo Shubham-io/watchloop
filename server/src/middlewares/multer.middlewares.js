@@ -1,5 +1,6 @@
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 import { ApiError } from "../utils/ApiError.js";
 
 const uploadDir = path.join(process.cwd(), "public", "temp");
