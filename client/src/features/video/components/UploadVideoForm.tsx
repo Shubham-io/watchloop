@@ -108,7 +108,9 @@ const UploadVideoForm = () => {
 
       {/* Video */}
       <div className="space-y-2">
-        <Label>Video File</Label>
+        <Label>
+          Video File <span className="text-yellow-500/70 text-sm">(Current video upload limit is 5 MB)</span>
+        </Label>
 
         <VideoUploader
           value={videoFile}

@@ -37,10 +37,10 @@ export default function UserDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <button className="rounded-full focus:outline-none">
+        <button className="rounded-full focus:outline-none mt-2">
           <UserAvatar
             src={user.avatar}
-            className="cursor-pointer h-8 w-8 mt-2 md:h-10 md:w-10"
+            className="cursor-pointer h-8 w-8 md:w-10"
           />
         </button>
       </DropdownMenuTrigger>
