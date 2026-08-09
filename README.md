@@ -1,4 +1,4 @@
-# Watchloop
+# Watchloop Project
 
 A YouTube-inspired video streaming platform built with modern web technologies. Watchloop allows users to upload, watch, and interact with videos through features like comments, likes, playlists, subscriptions, and more.
 
