@@ -17,7 +17,6 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
-    console.info("Generated access token: ", accessToken);
 
     return { accessToken, refreshToken };
   } catch (error) {
@@ -97,21 +96,20 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!email && !username) {
     throw new ApiError(400, "Email or username is required");
   }
-
-  // find user by email or username
-
-  const user = await User.findOne({
-    $or: [{ email }, { username }],
-  });
-
-  if (!user) {
-    throw new ApiError(400, "Invalid credentials");
+  if (!password) {
+    throw new ApiError(400, "Password is required");
   }
 
-  // validate password
-  const isPasswordValid = await user.comparePassword(password);
+  // find user by whichever identifier was provided
+  const user = await User.findOne(
+    email ? { email } : { username: username.toLowerCase() }
+  );
+
+  // same response for unknown user and wrong password, so attackers
+  // can't discover which accounts exist
+  const isPasswordValid = user && (await user.comparePassword(password));
   if (!isPasswordValid) {
-    throw new ApiError(400, "Invalid password");
+    throw new ApiError(401, "Invalid credentials");
   }
 
   // generate tokens
@@ -135,11 +133,9 @@ const loginUser = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
-      new ApiResponse(
-        200,
-        { user: loggedInUser, accessToken, refreshToken },
-        "User logged in successfully"
-      )
+      // tokens are only sent as httpOnly cookies, never in the body,
+      // so JavaScript (and any XSS) can't read them
+      new ApiResponse(200, { user: loggedInUser }, "User logged in successfully")
     );
 });
 
@@ -209,11 +205,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", newRefreshToken, options)
       .json(
-        new ApiResponse(
-          200,
-          { accessToken, refreshToken: newRefreshToken },
-          "Access token refreshed successfully"
-        )
+        new ApiResponse(200, null, "Access token refreshed successfully")
       );
   } catch (error) {
     console.error("Error refreshing access token: ", error);

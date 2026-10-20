@@ -3,9 +3,7 @@ import type { LoginInput } from "../types/auth.types";
 
 export const loginUser = async (data: LoginInput) => {
   const response = await axiosInstance.post("/users/login", data);
-  console.log("response =", response);
-  console.log("response.data =", response.data);
-  return response.data.data;
+  return response.data.data.user;
 };
 
 export const registerUser = async (formData: FormData) => {
