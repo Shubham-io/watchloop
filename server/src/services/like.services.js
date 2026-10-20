@@ -1,20 +1,25 @@
 import { Like } from "../models/like.models.js";
 
+const DUPLICATE_KEY = 11000;
+
+// Toggle without a read-then-write race: try to delete first; if nothing was
+// deleted, create. The unique index makes a concurrent duplicate create fail.
 export const toggleLike = async (filter) => {
-  const existingLike = await Like.findOne(filter);
+  const removed = await Like.findOneAndDelete(filter);
 
-  // dislike if like exists
-  if (existingLike) {
-    await Like.deleteOne(filter);
-
+  if (removed) {
     return {
       liked: false,
-      message: "Liked removed successfully",
+      message: "Like removed successfully",
     };
   }
 
-  // create a like
-  await Like.create(filter);
+  try {
+    await Like.create(filter);
+  } catch (error) {
+    // a concurrent request already created this like
+    if (error.code !== DUPLICATE_KEY) throw error;
+  }
 
   return {
     liked: true,
