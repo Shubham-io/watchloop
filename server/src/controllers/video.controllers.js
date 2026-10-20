@@ -13,6 +13,8 @@ import {
 import { addVideoToWatchHistory } from "../services/video.services.js";
 import { MAX_IMAGE_SIZE } from "../constants.js";
 
+const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 const getAllVideos = asyncHandler(async (req, res) => {
   const {
     page = 1,
@@ -27,10 +29,16 @@ const getAllVideos = asyncHandler(async (req, res) => {
   const pageNum = Math.max(Number(page) || 1, 1);
   const limitNum = Math.min(Number(limit) || 10, 50);
 
-  // validate sort fields
-  const allowedSortFields = ["createdAt", "views", "duration", "title"];
+  // map public sort names to document paths
+  const sortFields = {
+    createdAt: "createdAt",
+    views: "views",
+    duration: "videoFile.duration",
+    title: "title",
+  };
 
-  if (!allowedSortFields.includes(sortBy)) {
+  const sortField = sortFields[sortBy];
+  if (!sortField) {
     throw new ApiError(400, "Invalid sort field");
   }
 
@@ -48,12 +56,12 @@ const getAllVideos = asyncHandler(async (req, res) => {
     matchStage.owner = new mongoose.Types.ObjectId(userId);
   }
 
-  // Search by title or description
-  if (query.trim()) {
-    matchStage.title = {
-      $regex: query.trim(),
-      $options: "i",
-    };
+  // Search by title or description; escape user input so it is matched
+  // literally (prevents invalid-regex 500s and ReDoS patterns)
+  const searchTerm = String(query).trim().slice(0, 100);
+  if (searchTerm) {
+    const pattern = new RegExp(escapeRegex(searchTerm), "i");
+    matchStage.$or = [{ title: pattern }, { description: pattern }];
   }
 
   // Build aggregation pipeline
@@ -63,7 +71,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     },
     {
       $sort: {
-        [sortBy]: sortType === "asc" ? 1 : -1,
+        [sortField]: sortType === "asc" ? 1 : -1,
       },
     },
     {
