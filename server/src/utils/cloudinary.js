@@ -7,36 +7,40 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadToCloudinary = async (filePath) => {
-  try {
-    if (!filePath) return null;
+// delete the local temp file; ignore if it's already gone
+const removeLocalFile = (filePath) => {
+  fs.rm(filePath, { force: true }, () => {});
+};
 
-    const response = await cloudinary.uploader.upload(filePath, {
+const uploadToCloudinary = async (filePath) => {
+  if (!filePath) return null;
+
+  try {
+    return await cloudinary.uploader.upload(filePath, {
       resource_type: "auto",
     });
-
-    console.log(
-      "File uploaded to Cloudinary successfully with path: ",
-      response.url
-    );
-
-    fs.unlinkSync(filePath); // delete the file after uploading to cloudinary
-    return response;
   } catch (error) {
     console.error("Error uploading file to Cloudinary: ", error);
-    fs.unlinkSync(filePath); // delete the file if there is an error
     return null;
+  } finally {
+    removeLocalFile(filePath);
   }
 };
 
 const deleteFromCloudinary = async (publicId, resourceType = "image") => {
+  if (!publicId) return null;
+
   try {
     const response = await cloudinary.uploader.destroy(publicId, {
       resource_type: resourceType,
     });
 
-    if (response.result !== "ok") {
-      console.warn(`Failed to delete ${resourceType}`, result);
+    // "not found" means it's already gone, which is fine for a delete
+    if (response.result !== "ok" && response.result !== "not found") {
+      console.warn(
+        `Failed to delete ${resourceType} ${publicId} from Cloudinary:`,
+        response
+      );
     }
 
     return response;

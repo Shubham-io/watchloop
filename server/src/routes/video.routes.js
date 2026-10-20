@@ -9,14 +9,14 @@ import {
   incrementViewCount,
 } from "../controllers/video.controllers.js";
 
-import { upload } from "../middlewares/multer.middlewares.js";
+import { upload, uploadVideo } from "../middlewares/multer.middlewares.js";
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
 
 const router = express.Router();
 
 router.route("/publish").post(
   verifyJWT,
-  upload.fields([
+  uploadVideo.fields([
     {
       name: "videoFile",
       maxCount: 1,

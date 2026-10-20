@@ -23,29 +23,38 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Channel not found");
   }
 
-  // Check existing subscription
-  const existingSubscription = await Subscription.findOne({
-    subscriber: subscriberId,
-    channel: channelId,
-  });
+  const filter = { subscriber: subscriberId, channel: channelId };
 
-  // unsubscribing channel if already subscribed
-  if (existingSubscription) {
-    await Subscription.findOneAndDelete(existingSubscription._id);
-
+  // unsubscribe if already subscribed (delete-first avoids a read/write race)
+  const removed = await Subscription.findOneAndDelete(filter);
+  if (removed) {
     return res
       .status(200)
-      .json(new ApiResponse(200, {isSubscribed: false}, "Channel unsubscribed successfully"));
+      .json(
+        new ApiResponse(
+          200,
+          { isSubscribed: false },
+          "Channel unsubscribed successfully"
+        )
+      );
   }
 
-  const createdSubscription = await Subscription.create({
-    subscriber: subscriberId,
-    channel: channelId,
-  });
+  try {
+    await Subscription.create(filter);
+  } catch (error) {
+    // unique index: a concurrent request already subscribed
+    if (error.code !== 11000) throw error;
+  }
 
   return res
     .status(201)
-    .json(new ApiResponse(201, {isSubscribed: true}, "Channel subscribed successfully"));
+    .json(
+      new ApiResponse(
+        201,
+        { isSubscribed: true },
+        "Channel subscribed successfully"
+      )
+    );
 });
 
 // controller to return subscriber list of a channel
@@ -88,7 +97,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     },
   ]);
 
-  console.log(subscribers);
+  // console.log(subscribers);
 
   return res
     .status(200)

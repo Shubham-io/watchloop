@@ -30,7 +30,7 @@ const AddToPlaylistDialog = ({ videoId }: Props) => {
   const removeMutation = useRemoveVideoFromPlaylist(user?._id ?? "");
 
   const handleCheckedChange = (checked: boolean, playlistId: string) => {
-    console.log("checked:", checked);
+    // console.log("checked:", checked);
     if (checked) {
       addMutation.mutate({
         playlistId,

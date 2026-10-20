@@ -11,7 +11,7 @@ export const useChangePassword = () => {
       toast.success("Password updated successfully.");
     },
     onError: (error) => {
-        console.log(error);
+        // console.log(error);
       toast.error(getErrorMessage(error.message));
     },
   });

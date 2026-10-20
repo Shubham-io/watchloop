@@ -11,6 +11,9 @@ import {
 } from "../utils/cloudinary.js";
 
 import { addVideoToWatchHistory } from "../services/video.services.js";
+import { MAX_IMAGE_SIZE } from "../constants.js";
+
+const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const getAllVideos = asyncHandler(async (req, res) => {
   const {
@@ -26,10 +29,16 @@ const getAllVideos = asyncHandler(async (req, res) => {
   const pageNum = Math.max(Number(page) || 1, 1);
   const limitNum = Math.min(Number(limit) || 10, 50);
 
-  // validate sort fields
-  const allowedSortFields = ["createdAt", "views", "duration", "title"];
+  // map public sort names to document paths
+  const sortFields = {
+    createdAt: "createdAt",
+    views: "views",
+    duration: "videoFile.duration",
+    title: "title",
+  };
 
-  if (!allowedSortFields.includes(sortBy)) {
+  const sortField = sortFields[sortBy];
+  if (!sortField) {
     throw new ApiError(400, "Invalid sort field");
   }
 
@@ -47,12 +56,12 @@ const getAllVideos = asyncHandler(async (req, res) => {
     matchStage.owner = new mongoose.Types.ObjectId(userId);
   }
 
-  // Search by title or description
-  if (query.trim()) {
-    matchStage.title = {
-      $regex: query.trim(),
-      $options: "i",
-    };
+  // Search by title or description; escape user input so it is matched
+  // literally (prevents invalid-regex 500s and ReDoS patterns)
+  const searchTerm = String(query).trim().slice(0, 100);
+  if (searchTerm) {
+    const pattern = new RegExp(escapeRegex(searchTerm), "i");
+    matchStage.$or = [{ title: pattern }, { description: pattern }];
   }
 
   // Build aggregation pipeline
@@ -62,7 +71,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     },
     {
       $sort: {
-        [sortBy]: sortType === "asc" ? 1 : -1,
+        [sortField]: sortType === "asc" ? 1 : -1,
       },
     },
     {
@@ -124,14 +133,20 @@ const publishAVideo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Title and description are required");
   }
 
-  const videoLocalPath = req.files?.videoFile[0]?.path;
-  const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
+  const videoLocalPath = req.files?.videoFile?.[0]?.path;
+  const thumbnailFile = req.files?.thumbnail?.[0];
+  const thumbnailLocalPath = thumbnailFile?.path;
 
   if (!videoLocalPath) {
     throw new ApiError(400, "video is required");
   }
   if (!thumbnailLocalPath) {
     throw new ApiError(400, "Thumbnail is required");
+  }
+
+  // uploadVideo allows up to MAX_VIDEO_SIZE per file, so cap the image here
+  if (thumbnailFile.size > MAX_IMAGE_SIZE) {
+    throw new ApiError(400, "Thumbnail must be 5 MB or smaller");
   }
 
   //   upload to cloudinary
@@ -180,21 +195,16 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
 const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
-  if (!videoId) {
-    throw new ApiError(400, "video id is required");
+  if (!isValidObjectId(videoId)) {
+    throw new ApiError(400, "Invalid video id");
   }
 
-  // const video = await Video.findById(videoId).populate(
-  //   "owner",
-  //   "username fullname avatar"
-  // );
-
-  // Increment view count
-
-  const video = await Video.aggregate([
+  const videos = await Video.aggregate([
     {
+      // unpublished videos are visible only to their owner
       $match: {
         _id: new mongoose.Types.ObjectId(videoId),
+        $or: [{ isPublished: true }, { owner: req.user._id }],
       },
     },
     // populate owner
@@ -284,8 +294,9 @@ const getVideoById = asyncHandler(async (req, res) => {
     },
   ]);
 
+  const video = videos[0];
   if (!video) {
-    throw new ApiError(400, "video is not available");
+    throw new ApiError(404, "Video not found");
   }
 
   // adding the video to watch history of user
@@ -295,14 +306,14 @@ const getVideoById = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, video[0], "Video fetched successfully"));
+    .json(new ApiResponse(200, video, "Video fetched successfully"));
 });
 
 const updateVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   const { title, description } = req.body;
   const thumbnailLocalPath = req.file?.path;
-  console.info("thumbnailLocalPath: ", thumbnailLocalPath);
+  // console.info("thumbnailLocalPath: ", thumbnailLocalPath);
 
   // check if at least one filed is provided
   if (!title?.trim() && !description?.trim() && !thumbnailLocalPath) {
@@ -316,7 +327,7 @@ const updateVideo = asyncHandler(async (req, res) => {
   const updateFields = {};
 
   if (title?.trim()) {
-    updateFields.title = title;
+    updateFields.title = title.trim();
   }
 
   if (description?.trim()) {
@@ -339,8 +350,11 @@ const updateVideo = asyncHandler(async (req, res) => {
     updateFields.thumbnail = thumbnail;
   }
 
-  const updatedVideo = await Video.findByIdAndUpdate(
-    videoId,
+  const updatedVideo = await Video.findOneAndUpdate(
+    {
+      _id: videoId,
+      owner: req.user._id,
+    },
     {
       $set: updateFields,
     },

@@ -53,7 +53,7 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 
 const getLikedVideos = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  console.log("userid ", userId);
+  // console.log("userid ", userId);
   if (!isValidObjectId(userId)) {
     throw new ApiError(400, "invalid user id");
   }
@@ -118,7 +118,7 @@ const getLikedVideos = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  console.log("likedVideos ", likedVideos);
+  // console.log("likedVideos ", likedVideos);
 
   return res.status(200).json(
     new ApiResponse(

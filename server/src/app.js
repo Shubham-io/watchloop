@@ -7,7 +7,7 @@ const app = express();
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
-console.log("CORS_ORIGIN =", process.env.CORS_ORIGIN);
+// console.log("CORS_ORIGIN =", process.env.CORS_ORIGIN);
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
@@ -48,5 +48,14 @@ app.use("/api/v1/subscriptions", subscriptionRouter);
 app.use("/api/v1/likes", likeRouter);
 app.use("/api/v1/playlist", playlistRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
+
+// error handling (must be registered after all routes)
+import {
+  errorHandler,
+  notFoundHandler,
+} from "./middlewares/error.middlewares.js";
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export { app };
