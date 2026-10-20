@@ -316,7 +316,7 @@ const updateVideo = asyncHandler(async (req, res) => {
   const updateFields = {};
 
   if (title?.trim()) {
-    updateFields.title = title;
+    updateFields.title = title.trim();
   }
 
   if (description?.trim()) {
@@ -339,8 +339,11 @@ const updateVideo = asyncHandler(async (req, res) => {
     updateFields.thumbnail = thumbnail;
   }
 
-  const updatedVideo = await Video.findByIdAndUpdate(
-    videoId,
+  const updatedVideo = await Video.findOneAndUpdate(
+    {
+      _id: videoId,
+      owner: req.user._id,
+    },
     {
       $set: updateFields,
     },
