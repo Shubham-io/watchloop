@@ -32,10 +32,10 @@ export const publishVideo = async (
 
   const response = await axiosInstance.post("/videos/publish", formData, {
     onUploadProgress: (event) => {
-      console.log("Progress Event:", {
-        loaded: event.loaded,
-        total: event.total,
-      });
+      // console.log("Progress Event:", {
+        // loaded: event.loaded,
+        // total: event.total,
+      // });
       if (!event.total) return;
 
       const percentage = Math.round((event.loaded * 100) / event.total);

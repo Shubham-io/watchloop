@@ -313,7 +313,7 @@ const updateVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   const { title, description } = req.body;
   const thumbnailLocalPath = req.file?.path;
-  console.info("thumbnailLocalPath: ", thumbnailLocalPath);
+  // console.info("thumbnailLocalPath: ", thumbnailLocalPath);
 
   // check if at least one filed is provided
   if (!title?.trim() && !description?.trim() && !thumbnailLocalPath) {

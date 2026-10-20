@@ -13,7 +13,7 @@ export default function ChannelHeader({
   channel,
 }: ChannelHeaderProps) {
 
-    console.log("channel =", channel);
+    // console.log("channel =", channel);
   return (
     <section className="space-y-6">
       {/* Cover image */}

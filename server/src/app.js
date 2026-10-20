@@ -7,7 +7,7 @@ const app = express();
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
-console.log("CORS_ORIGIN =", process.env.CORS_ORIGIN);
+// console.log("CORS_ORIGIN =", process.env.CORS_ORIGIN);
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,

@@ -97,7 +97,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     },
   ]);
 
-  console.log(subscribers);
+  // console.log(subscribers);
 
   return res
     .status(200)
