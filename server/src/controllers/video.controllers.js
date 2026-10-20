@@ -11,6 +11,7 @@ import {
 } from "../utils/cloudinary.js";
 
 import { addVideoToWatchHistory } from "../services/video.services.js";
+import { MAX_IMAGE_SIZE } from "../constants.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
   const {
@@ -124,14 +125,20 @@ const publishAVideo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Title and description are required");
   }
 
-  const videoLocalPath = req.files?.videoFile[0]?.path;
-  const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
+  const videoLocalPath = req.files?.videoFile?.[0]?.path;
+  const thumbnailFile = req.files?.thumbnail?.[0];
+  const thumbnailLocalPath = thumbnailFile?.path;
 
   if (!videoLocalPath) {
     throw new ApiError(400, "video is required");
   }
   if (!thumbnailLocalPath) {
     throw new ApiError(400, "Thumbnail is required");
+  }
+
+  // uploadVideo allows up to MAX_VIDEO_SIZE per file, so cap the image here
+  if (thumbnailFile.size > MAX_IMAGE_SIZE) {
+    throw new ApiError(400, "Thumbnail must be 5 MB or smaller");
   }
 
   //   upload to cloudinary
