@@ -55,6 +55,10 @@ import {
   notFoundHandler,
 } from "./middlewares/error.middlewares.js";
 
+app.get("/", (_req, res) => {
+  res.json({ success: true, message: "Watchloop API is running" });
+});
+
 app.use(notFoundHandler);
 app.use(errorHandler);
 
